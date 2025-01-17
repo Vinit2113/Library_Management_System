@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Injectable()
 export class MailService {
@@ -7,12 +10,13 @@ export class MailService {
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
       // host: 'smtp.ethereal.com',
-      host: 'smtp.ethream.com',
-      port: 465,
+      // host: 'smtp.ethream.com',
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT, 10),
       secure: true,
       auth: {
-        user: 'vishfkesender@gmail.com',
-        pass: 'fkyi ects habo hqsz',
+        user: process.env.MAIL_USER,
+        pass: process.env.MAIL_PASS,
       },
       tls: {
         ciphers: 'TLSv1.2',
@@ -20,11 +24,10 @@ export class MailService {
     });
 
     const info = await transporter.sendMail({
-      from: '"Why the heel is password not reseting" <vishfkesender@gmail.com>', // sender address
+      from: `"Why the heel is password not reseting" <${process.env.MAIL_USER}>`, // sender address
       to: email, // list of receivers
       subject: 'Reset Password', // Subject line
-      text: `Click on thi following link to reset your password: ${resetPasswordLink}`, // plain text body
-      // html: '<b>Hello world?</b>', // html body
+      text: `Click on this following link to reset your password: ${resetPasswordLink}`, // plain text body
     });
     // console.log('indonfo', info);
     return info;
